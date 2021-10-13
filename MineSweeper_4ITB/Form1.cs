@@ -10,6 +10,8 @@ using System.Windows.Forms;
 
 namespace MineSweeper_4ITB
 {
+    //https://github.com/vratislavino/4itb_minesweeper.git
+
     public partial class Form1 : Form
     {
         Mine[,] mines;
@@ -29,6 +31,8 @@ namespace MineSweeper_4ITB
                     panel1.Controls.Add(m);
                     m.Location = new Point(i * m.Width, j * m.Height);
                     m.MineClicked += OnMineClicked;
+                    m.OffenbarenAngefordert += AnOffenbarenAngefordert;
+                    m.MineExploded += OnMineExploded;
                     m.X = i;
                     m.Y = j;
                     mines[i, j] = m;
@@ -43,15 +47,48 @@ namespace MineSweeper_4ITB
             this.Text = "Minesweeper";
         }
 
-        private void OnMineClicked(Mine mine, MouseButtons btn) {
-            if (!isGenerated)
-                Generate(mine);
+        private void OnMineExploded() {
+            foreach(var m in mines) {
+                if(m.IsMine) {
+                    m.PeekMine();
+                }
+            }
+        }
 
-            mine.IsRevealed = true;
+        private void AnOffenbarenAngefordert(Mine mine) {
+            for (int j = mine.X - 1; j <= mine.X + 1; j++) {
+                for (int k = mine.Y - 1; k <= mine.Y + 1; k++) {
+                    if (j >= 0 && j < mines.GetLength(0) && k >= 0 && k < mines.GetLength(1))
+                        if(!mines[j,k].IsRevealed) {
+                            mines[j, k].IsRevealed = true;
+                        }
+                }
+            }
+        }
+
+        private void OnMineClicked(Mine mine, MouseButtons btn) {
+
+            if(btn == MouseButtons.Right) {
+                if (mine.IsRevealed)
+                    return;
+                mine.HasFlag = !mine.HasFlag;
+                return;
+            }
+
+            if (btn == MouseButtons.Left) {
+                if (!mine.HasFlag) {
+                    if (!isGenerated) {
+                        Generate(mine);
+                        isGenerated = true;
+                    }
+
+                    mine.IsRevealed = true;
+                }
+            }
         }
 
         private void Generate(Mine mine) {
-            int count = 20;
+            int count = 5;
             Random r = new Random();
             List<Tuple<int, int>> generatedMines = new List<Tuple<int, int>>();
             int x, y;
@@ -67,7 +104,21 @@ namespace MineSweeper_4ITB
                     continue;
                 }
                 generatedMines.Add(Tuple.Create(x, y));
+            }
 
+            // generated!
+            for(int i = 0; i < count; i++) {
+                x = generatedMines[i].Item1;
+                y = generatedMines[i].Item2;
+                mines[x, y].AssignValue(-1);
+                for(int j = x-1; j <= x+1; j++) {
+                    for(int k = y-1; k <= y+1; k++) {
+                        if(j >= 0 && j < mines.GetLength(0) && k >= 0 && k < mines.GetLength(1))
+                            if(!mines[j, k].IsMine) {
+                                mines[j, k].IncreaseValue();
+                            }
+                    }
+                }
             }
         }
     }
