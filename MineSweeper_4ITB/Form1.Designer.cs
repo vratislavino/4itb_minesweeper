@@ -66,12 +66,14 @@ namespace MineSweeper_4ITB
             this.nastaveníToolStripMenuItem.Name = "nastaveníToolStripMenuItem";
             this.nastaveníToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.nastaveníToolStripMenuItem.Text = "Nastavení";
+            this.nastaveníToolStripMenuItem.Click += new System.EventHandler(this.nastaveníToolStripMenuItem_Click);
             // 
             // konecHryToolStripMenuItem
             // 
             this.konecHryToolStripMenuItem.Name = "konecHryToolStripMenuItem";
             this.konecHryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.konecHryToolStripMenuItem.Text = "Konec hry";
+            this.konecHryToolStripMenuItem.Click += new System.EventHandler(this.konecHryToolStripMenuItem_Click);
             // 
             // Form1
             // 

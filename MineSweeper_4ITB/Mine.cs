@@ -57,6 +57,8 @@ namespace MineSweeper_4ITB
             get { return isRevealed; }
             set {
                 isRevealed = value;
+                if (hasFlag)
+                    hasFlag = false;
                 this.BackColor = isRevealed ? SystemColors.ControlDark : SystemColors.Control;
                 DisplayNumber();
             }
